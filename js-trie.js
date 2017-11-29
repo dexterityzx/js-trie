@@ -1,7 +1,7 @@
 //js-trie
 
 var TrieNode = function(){
-    this.nodes = {};
+    this.nodes = Object.create(null); // remove object prototype property
     this.words = [];
 }
 
