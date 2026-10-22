@@ -10,6 +10,9 @@ const Trie = () => {
     const _pub = {};
 
     _pub.add = function (word) {
+        if (typeof word !== 'string') {
+            throw new TypeError('add: expected a string');
+        }
         const chars = word.toLowerCase().split('');
 
         let root = _root;
@@ -23,7 +26,22 @@ const Trie = () => {
     };
 
     _pub.addMany = function (words) {
-        words.forEach(word => {
+        // Realm-safe iterable handling: accept any iterable, reject
+        // non-iterables with a TypeError so callers can detect bad input
+        // instead of silently loading nothing.
+        if (words === null || words === undefined || typeof words[Symbol.iterator] !== 'function') {
+            throw new TypeError('addMany: expected an iterable of strings');
+        }
+        // Materialize and validate every element before inserting so a
+        // single non-string entry cannot abort the batch mid-way and leave
+        // the trie partially populated.
+        const list = Array.from(words);
+        for (let i = 0; i < list.length; i++) {
+            if (typeof list[i] !== 'string') {
+                throw new TypeError('addMany: element at index ' + i + ' is not a string');
+            }
+        }
+        list.forEach(word => {
             _pub.add(word);
         });
     };
