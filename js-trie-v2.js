@@ -29,6 +29,9 @@ const Trie = () => {
     };
 
     _pub.prefix = function (prefix) {
+        if (typeof prefix !== 'string') {
+            throw new TypeError('prefix must be a string');
+        }
         prefix = prefix.toLowerCase();
 
         let root = _root;
