@@ -1,3 +1,13 @@
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else {
+        root.Trie = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function () {
+
 const Trie = () => {
 
     const TrieNode = function () {
@@ -45,11 +55,16 @@ const Trie = () => {
     return _pub;
 };
 
-let trie = Trie();
-trie.add('aaaa');
-trie.add('aab');
-trie.add('ab');
-trie.add('abc');
-trie.add('Abc');
-trie.add('bbb');
-console.log(trie.prefix('abC'));
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+    let trie = Trie();
+    trie.add('aaaa');
+    trie.add('aab');
+    trie.add('ab');
+    trie.add('abc');
+    trie.add('Abc');
+    trie.add('bbb');
+    console.log(trie.prefix('abC'));
+}
+
+return Trie;
+}));
