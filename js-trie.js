@@ -1,5 +1,15 @@
 //js-trie
 
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
+    } else if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else {
+        root.Trie = factory();
+    }
+}(typeof self !== 'undefined' ? self : this, function () {
+
 var TrieNode = function(){
     this.nodes = Object.create(null); // remove object prototype property
     this.words = [];
@@ -42,9 +52,14 @@ Trie.prototype.searchByPrefix = function(prefix){
 }
 
 //testing
-var trie = new Trie();
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+    var trie = new Trie();
 
-trie.addBatch(['aaad','aac','ab']);
-console.log(trie.searchByPrefix('a'));
-console.log(trie.searchByPrefix('aa'));
-console.log(trie.searchByPrefix('aaa'));
+    trie.addBatch(['aaad','aac','ab']);
+    console.log(trie.searchByPrefix('a'));
+    console.log(trie.searchByPrefix('aa'));
+    console.log(trie.searchByPrefix('aaa'));
+}
+
+return Trie;
+}));

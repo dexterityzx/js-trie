@@ -1,0 +1,41 @@
+{
+  "name": "js-trie",
+  "version": "2.0.0",
+  "description": "A small JavaScript trie with prefix search. Ships two API variants: legacy class-based Trie (js-trie.js) and the current factory-based Trie (js-trie-v2.js).",
+  "main": "js-trie-v2.js",
+  "exports": {
+    ".": "./js-trie-v2.js",
+    "./v1": "./js-trie.js",
+    "./v2": "./js-trie-v2.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "js-trie.js",
+    "js-trie-v2.js",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "test": "node -e \"const T=require('./js-trie-v2.js');const t=T();t.add('abc');if(JSON.stringify(t.prefix('ab'))!==JSON.stringify(['abc']))process.exit(1);const T1=require('./js-trie.js');const t1=new T1();t1.addBatch(['abc']);if(t1.searchByPrefix('ab')[0]!=='abc')process.exit(1);console.log('ok');\""
+  },
+  "keywords": [
+    "trie",
+    "prefix",
+    "autocomplete",
+    "search"
+  ],
+  "author": "dexterityzx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dexterityzx/js-trie.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dexterityzx/js-trie/issues"
+  },
+  "homepage": "https://github.com/dexterityzx/js-trie#readme"
+}
