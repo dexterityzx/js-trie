@@ -31,6 +31,9 @@ Trie.prototype.add = function(word){
 }
 
 Trie.prototype.searchByPrefix = function(prefix){
+    if(typeof prefix !== 'string'){
+        throw new TypeError('prefix must be a string');
+    }
     var root = this.root;
     for(let i=0; i<prefix.length; i++){
         if(root.nodes[prefix[i]] === undefined){
