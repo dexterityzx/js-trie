@@ -41,10 +41,6 @@ Trie.prototype.searchByPrefix = function(prefix){
     return root.words;
 }
 
-//testing
-var trie = new Trie();
-
-trie.addBatch(['aaad','aac','ab']);
-console.log(trie.searchByPrefix('a'));
-console.log(trie.searchByPrefix('aa'));
-console.log(trie.searchByPrefix('aaa'));
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Trie;
+}
