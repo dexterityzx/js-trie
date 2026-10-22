@@ -30,7 +30,23 @@ Trie.prototype.add = function(word){
     }
 }
 
-Trie.prototype.searchByPrefix = function(prefix){
+// searchByPrefix(prefix, limit = 50, filter)
+//
+// Returns up to `limit` words stored under the node reached by `prefix`.
+// A fresh array is always returned so callers cannot mutate internal state
+// through the result. An optional `filter(word)` predicate lets the host
+// drop entries the current requester may not see (this structure performs
+// NO access-control filtering of its own - see README.md).
+//
+// Returns null when the prefix is not present in the trie (unchanged).
+Trie.prototype.DEFAULT_SEARCH_LIMIT = 50;
+
+Trie.prototype.searchByPrefix = function(prefix, limit, filter){
+    var cap = (typeof limit === 'number' && limit >= 0)
+        ? Math.floor(limit)
+        : Trie.prototype.DEFAULT_SEARCH_LIMIT;
+    var predicate = (typeof filter === 'function') ? filter : null;
+
     var root = this.root;
     for(let i=0; i<prefix.length; i++){
         if(root.nodes[prefix[i]] === undefined){
@@ -38,7 +54,16 @@ Trie.prototype.searchByPrefix = function(prefix){
         }
         root = root.nodes[prefix[i]];
     }
-    return root.words;
+
+    var out = [];
+    var words = root.words;
+    for(let i=0; i<words.length && out.length<cap; i++){
+        if(predicate && !predicate(words[i])){
+            continue;
+        }
+        out.push(words[i]);
+    }
+    return out;
 }
 
 //testing
