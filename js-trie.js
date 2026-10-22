@@ -34,11 +34,14 @@ Trie.prototype.searchByPrefix = function(prefix){
     var root = this.root;
     for(let i=0; i<prefix.length; i++){
         if(root.nodes[prefix[i]] === undefined){
-            return null;
+            return [];
         }
         root = root.nodes[prefix[i]];
     }
-    return root.words;
+    // Return a shallow copy so callers cannot mutate the trie's internal
+    // storage (e.g. via sort/splice/push/length-truncation). The returned
+    // array is caller-owned.
+    return root.words.slice();
 }
 
 //testing
