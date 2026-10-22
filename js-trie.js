@@ -34,11 +34,11 @@ Trie.prototype.searchByPrefix = function(prefix){
     var root = this.root;
     for(let i=0; i<prefix.length; i++){
         if(root.nodes[prefix[i]] === undefined){
-            return null;
+            return [];
         }
         root = root.nodes[prefix[i]];
     }
-    return root.words;
+    return root.words.slice();
 }
 
 //testing
