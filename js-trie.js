@@ -10,33 +10,43 @@ var Trie = function(){
 }
 
 Trie.prototype.addBatch = function(words){
-    if(words.constructor !== Array){
+    if(!Array.isArray(words)){
         return;
     }
-    var root = this.root;
     for(let i=0; i<words.length; i++){
+        if(typeof words[i] !== 'string'){
+            throw new TypeError('word must be a string');
+        }
         this.add(words[i]);
     }
 }
 
 Trie.prototype.add = function(word){
-    var root = this.root; 
+    if(typeof word !== 'string'){
+        throw new TypeError('word must be a string');
+    }
+    var root = this.root;
     for(let i=0;i<word.length;i++){
-        if(root.nodes[word[i]] === undefined){
-            root.nodes[word[i]] = new TrieNode();
+        var ch = word.charAt(i);
+        if(root.nodes[ch] === undefined){
+            root.nodes[ch] = new TrieNode();
         }
-        root.nodes[word[i]].words.push(word);
-        root = root.nodes[word[i]];
+        root.nodes[ch].words.push(word);
+        root = root.nodes[ch];
     }
 }
 
 Trie.prototype.searchByPrefix = function(prefix){
+    if(typeof prefix !== 'string'){
+        throw new TypeError('prefix must be a string');
+    }
     var root = this.root;
     for(let i=0; i<prefix.length; i++){
-        if(root.nodes[prefix[i]] === undefined){
+        var ch = prefix.charAt(i);
+        if(root.nodes[ch] === undefined){
             return null;
         }
-        root = root.nodes[prefix[i]];
+        root = root.nodes[ch];
     }
     return root.words;
 }
