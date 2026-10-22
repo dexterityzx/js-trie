@@ -10,6 +10,9 @@ const Trie = () => {
     const _pub = {};
 
     _pub.add = function (word) {
+        if (typeof word !== 'string') {
+            throw new TypeError('add(word): word must be a string');
+        }
         const chars = word.toLowerCase().split('');
 
         let root = _root;
@@ -29,6 +32,9 @@ const Trie = () => {
     };
 
     _pub.prefix = function (prefix) {
+        if (typeof prefix !== 'string' || prefix.length === 0) {
+            return [];
+        }
         prefix = prefix.toLowerCase();
 
         let root = _root;
