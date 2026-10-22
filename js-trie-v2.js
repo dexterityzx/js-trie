@@ -28,8 +28,21 @@ const Trie = () => {
         });
     };
 
-    _pub.prefix = function (prefix) {
+    // prefix(prefix, limit = 50, filter)
+    //
+    // Returns up to `limit` words stored under the node reached by `prefix`.
+    // A fresh array is always returned (never a view into internal state).
+    // An optional `filter(word)` predicate lets the host drop entries the
+    // current requester may not see; this structure performs NO access-
+    // control filtering of its own (see README.md).
+    const DEFAULT_PREFIX_LIMIT = 50;
+
+    _pub.prefix = function (prefix, limit, filter) {
         prefix = prefix.toLowerCase();
+        const cap = (typeof limit === 'number' && limit >= 0)
+            ? Math.floor(limit)
+            : DEFAULT_PREFIX_LIMIT;
+        const predicate = (typeof filter === 'function') ? filter : null;
 
         let root = _root;
         for (let i = 0; i < prefix.length; i++) {
@@ -39,7 +52,13 @@ const Trie = () => {
             root = root.nodes.get(prefix[i]);
         }
 
-        return [...root.words];
+        const out = [];
+        for (const word of root.words) {
+            if (out.length >= cap) break;
+            if (predicate && !predicate(word)) continue;
+            out.push(word);
+        }
+        return out;
     };
 
     return _pub;
