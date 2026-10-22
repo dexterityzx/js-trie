@@ -1,5 +1,8 @@
 //js-trie
 
+var MAX_WORD_LEN = 1024;
+var MAX_BATCH_LEN = 100000;
+
 var TrieNode = function(){
     this.nodes = Object.create(null); // remove object prototype property
     this.words = [];
@@ -10,18 +13,28 @@ var Trie = function(){
 }
 
 Trie.prototype.addBatch = function(words){
-    if(words.constructor !== Array){
-        return;
+    if(!Array.isArray(words)){
+        throw new TypeError('addBatch expects an Array');
     }
-    var root = this.root;
-    for(let i=0; i<words.length; i++){
+    if(words.length > MAX_BATCH_LEN){
+        throw new RangeError('addBatch: batch exceeds MAX_BATCH_LEN (' + MAX_BATCH_LEN + ')');
+    }
+    var len = Math.min(words.length, MAX_BATCH_LEN);
+    for(let i=0; i<len; i++){
         this.add(words[i]);
     }
 }
 
 Trie.prototype.add = function(word){
-    var root = this.root; 
-    for(let i=0;i<word.length;i++){
+    if(typeof word !== 'string'){
+        throw new TypeError('add expects a string');
+    }
+    if(word.length > MAX_WORD_LEN){
+        throw new RangeError('add: word length exceeds MAX_WORD_LEN (' + MAX_WORD_LEN + ')');
+    }
+    var root = this.root;
+    var bound = Math.min(word.length, MAX_WORD_LEN);
+    for(let i=0;i<bound;i++){
         if(root.nodes[word[i]] === undefined){
             root.nodes[word[i]] = new TrieNode();
         }
