@@ -23,9 +23,63 @@ const Trie = () => {
     };
 
     _pub.addMany = function (words) {
-        words.forEach(word => {
-            _pub.add(word);
-        });
+        if (!Array.isArray(words)) {
+            throw new TypeError('addMany(words): expected an array');
+        }
+        // Pre-pass: validate every element before mutating any state so a bad
+        // element cannot leave the trie half-built.
+        for (let i = 0; i < words.length; i++) {
+            if (typeof words[i] !== 'string') {
+                throw new TypeError(
+                    'addMany(words): expected string at index ' + i +
+                    ', got ' + (words[i] === null ? 'null' : typeof words[i])
+                );
+            }
+        }
+        for (let i = 0; i < words.length; i++) {
+            _pub.add(words[i]);
+        }
+    };
+
+    _pub.remove = function (word) {
+        if (typeof word !== 'string') {
+            throw new TypeError('remove(word): expected a string');
+        }
+        const chars = word.toLowerCase().split('');
+
+        // Walk the trie, deleting the exact `word` from each node's words set
+        // along the path. Prune empty branches on the way back up so a diverged
+        // trie can be repaired without recreating the process state.
+        const path = [];
+        let root = _root;
+        for (let i = 0; i < chars.length; i++) {
+            const char = chars[i];
+            if (!root.nodes.has(char)) {
+                return false;
+            }
+            path.push({ parent: root, char: char });
+            root = root.nodes.get(char);
+        }
+
+        if (!root.words.has(word)) {
+            return false;
+        }
+
+        for (let i = 0; i < path.length; i++) {
+            path[i].parent.nodes.get(path[i].char).words.delete(word);
+        }
+
+        // Prune now-empty subtrees from the leaf upward.
+        for (let i = path.length - 1; i >= 0; i--) {
+            const node = path[i].parent.nodes.get(path[i].char);
+            if (node.words.size === 0 && node.nodes.size === 0) {
+                path[i].parent.nodes.delete(path[i].char);
+            } else {
+                break;
+            }
+        }
+
+        return true;
     };
 
     _pub.prefix = function (prefix) {
